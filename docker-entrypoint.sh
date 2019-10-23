@@ -5,6 +5,7 @@ main() {
   echo "" # see https://github.com/actions/toolkit/issues/168
   sanitize "$INPUT_PROFILE" "profile"
   COMMAND=${INPUT_COMMAND:-deploy}
+  echo "$COMMAND"
 
   set +e
   OUTPUT=$(sh -c "$(run-env "$COMMAND" "$INPUT_PROFILE")" 2>&1)
