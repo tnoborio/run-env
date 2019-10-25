@@ -8,6 +8,7 @@ main() {
   echo "$COMMAND"
 
   set +e
+  echo "$(run-env "$COMMAND" "$INPUT_PROFILE")"
   OUTPUT=$(sh -c "$(run-env "$COMMAND" "$INPUT_PROFILE")" 2>&1)
   SUCCESS=$?
   echo "$OUTPUT"
