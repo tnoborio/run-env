@@ -34,8 +34,8 @@ gcloud beta run deploy [[SERVICE] --namespace=NAMESPACE] --image=IMAGE
 (defn format-env [m]
   {:pre [(map? m)]}
   (when (< 0 (count m))
-    (str "--update-env-vars="
-         (string/join "," (into []
+    (str "--update-env-vars=^++^"
+         (string/join "++" (into []
                                 (map (fn [[k v]]
                                        (format "%s=%s" (name k) (core/interpolate (str v)))))
                                 m)))))
@@ -51,14 +51,4 @@ gcloud beta run deploy [[SERVICE] --namespace=NAMESPACE] --image=IMAGE
               (string? image)
               (map? spec))]
    :post [(string? %)]}
-  (string/join " " (into [(format "gcloud beta run deploy %s" (core/interpolate name))]
-                         (comp (map (fn [x]
-                                      (when x
-                                        (if (string? x)
-                                          x
-                                          (core/optional x spec)))))
-                               (filter some?))
-                         (conj args
-                               (core/optional :project spec)
-                               (format-env (get spec :env {}))
-                               (format-cloud-sql (get spec :cloudsql-instances []))))))
+  (format "gcloud beta run deploy %s" (core/interpolate name)))
