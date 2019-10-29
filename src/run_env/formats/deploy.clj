@@ -51,4 +51,14 @@ gcloud beta run deploy [[SERVICE] --namespace=NAMESPACE] --image=IMAGE
               (string? image)
               (map? spec))]
    :post [(string? %)]}
-  (format "gcloud beta run deploy %s" (core/interpolate name)))
+  (string/join " " (into [(format "gcloud beta run deploy %s" (core/interpolate name))]
+                         (comp (map (fn [x]
+                                      (when x
+                                        (if (string? x)
+                                          x
+                                          (core/optional x spec)))))
+                               (filter some?))
+                         (conj args
+                               (core/optional :project spec)
+                               (format-env (get spec :env {}))
+                               (format-cloud-sql (get spec :cloudsql-instances []))))))
